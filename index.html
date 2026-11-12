@@ -437,7 +437,6 @@
       }
     });
 
-    // Mostrar siempre el banner amistosamente si no está instalada en modo standalone
     if (!window.matchMedia('(display-mode: standalone)').matches && !window.navigator.standalone) {
       if (installBanner) {
         installBanner.style.display = 'flex';
