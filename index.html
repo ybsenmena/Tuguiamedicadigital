@@ -939,4 +939,12 @@
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
       downloadAnchor.setAttribute("download", `metricas_consultas_${new Date().toISOString().slice(0,10)}.json`);
-      document.body.appendChild(download
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    init();
+  </script>
+</body>
+</html>
