@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guía Médica Digital</title>
+  <title>TU MEDICO DIGITAL</title>
   
   <!-- Configuración PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0077b6">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Guía Médica">
+  <meta name="apple-mobile-web-app-title" content="TU MEDICO DIGITAL">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="icon" type="image/png" href="icon-192.png">
 
@@ -30,18 +30,47 @@
       --success: #25d366;
       --cashea-yellow: #ffeb00;
       --danger: #dc3545;
-      --admin-color: #475569;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 12px; padding-bottom: 80px; }
+
+    /* Banner de instalación amigable superior */
+    #install-banner {
+      display: none;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .install-banner-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 240px;
+    }
+    .install-banner-content img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    .install-banner-text h4 { font-size: 14px; margin-bottom: 2px; color: #ffeb00; }
+    .install-banner-text p { font-size: 12px; opacity: 0.9; }
+    .install-banner-actions { display: flex; gap: 8px; }
 
     header {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: white; padding: 16px; border-radius: 12px; margin-bottom: 16px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;
       display: flex; flex-direction: column; align-items: center;
-      position: relative;
     }
 
     .header-logo {
@@ -72,9 +101,11 @@
     .btn-success { background: var(--success); color: white; }
     .btn-call { background: #0d6efd; color: white; }
     .btn-maps { background: #ea4335; color: white; }
+    .btn-danger { background: var(--danger); color: white; }
     .btn-admin { background: #334155; color: white; font-weight: 700; border: 1px solid #475569; }
     .btn-admin:hover { background: #1e293b; }
     .btn-sm { padding: 6px 10px; font-size: 12px; }
+    .btn-banner-install { background: var(--cashea-yellow); color: black; font-weight: 800; }
 
     .actions-bar {
       display: flex; gap: 8px; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; align-items: center;
@@ -132,39 +163,7 @@
     .cashea-svg-icon { width: 14px; height: 14px; display: inline-block; vertical-align: middle; }
 
     .card-info { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.5; }
-    .card-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
-
-    /* Modal de Bienvenida e Invitación */
-    #pwa-install-modal {
-      display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.75); z-index: 99999;
-      justify-content: center; align-items: center; padding: 20px;
-    }
-    .install-dialog {
-      background: white; border-radius: 16px; padding: 26px; max-width: 400px; width: 100%;
-      text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); animation: scaleIn 0.3s ease;
-      position: relative;
-    }
-    @keyframes scaleIn {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    .install-dialog img { width: 72px; height: 72px; object-fit: contain; margin-bottom: 12px; }
-    .install-dialog h3 { color: var(--primary-dark); margin-bottom: 10px; font-size: 20px; }
-    .install-dialog p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
-    
-    .install-dialog button {
-      background: var(--cashea-yellow); color: black; border: none; font-weight: 800;
-      padding: 14px 20px; border-radius: 10px; cursor: pointer; font-size: 15px; width: 100%;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: 0.2s; margin-bottom: 8px;
-    }
-    .install-dialog button:hover { background: #e5d300; }
-    
-    .install-close-link {
-      background: none; border: none; color: var(--text-muted); font-size: 13px;
-      cursor: pointer; text-decoration: underline; padding: 4px;
-    }
-    .install-close-link:hover { color: var(--text); }
+    .card-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
 
     .modal {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -172,11 +171,11 @@
     }
     .modal.active { display: flex; }
     .modal-content {
-      background: white; border-radius: 12px; width: 100%; max-width: 500px;
+      background: white; border-radius: 12px; width: 100%; max-width: 520px;
       max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #888; }
+    .modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: #888; }
 
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
@@ -187,37 +186,51 @@
     .form-row .form-group { flex: 1; }
 
     .rating-stars { color: #f59e0b; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-    .comments-list, .history-list, .metrics-list { font-size: 12px; max-height: 250px; overflow-y: auto; margin-bottom: 10px; }
-    .comment-item, .history-item, .metric-item { background: #f1f3f5; padding: 10px; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .comments-list, .history-list, .metrics-list, .admin-doctors-list {
+      font-size: 12px; max-height: 240px; overflow-y: auto; margin-bottom: 10px;
+    }
+    .comment-item, .history-item, .metric-item {
+      background: #f1f3f5; padding: 10px; border-radius: 6px; margin-bottom: 8px;
+    }
+    .metric-item { display: flex; justify-content: space-between; align-items: center; }
 
-    .admin-grid { display: grid; gap: 10px; grid-template-columns: 1fr; margin-top: 10px; }
+    .admin-doc-item {
+      background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px;
+      margin-bottom: 8px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .admin-doc-actions { display: flex; gap: 6px; }
+    .admin-grid { display: grid; gap: 8px; grid-template-columns: 1fr; margin-bottom: 16px; }
     
     #qrcode-container { display: flex; justify-content: center; margin: 16px 0; }
   </style>
 </head>
 <body>
 
-  <!-- MODAL DE INVITACIÓN AMIGABLE AL INGRESAR -->
-  <div id="pwa-install-modal">
-    <div class="install-dialog">
-      <img src="icon-192.png" alt="Icono Guía Médica Digital">
-      <h3>¡Bienvenido a la Guía Médica!</h3>
-      <p>Nos complace tenerte de visita en nuestro portal. Aquí podrás encontrar a los especialistas médicos disponibles. Para una mejor experiencia, te invitamos a descargar la app y tener el acceso directo desde la pantalla de tu dispositivo.</p>
-      <button id="pwa-install-btn">INSTALAR APLICACIÓN</button>
-      <button class="install-close-link" onclick="closeInstallModal()">Continuar en la web</button>
+  <!-- BANNER SUPERIOR DE INSTALACIÓN (ACCESO DIRECTO) -->
+  <div id="install-banner">
+    <div class="install-banner-content">
+      <img src="icon-192.png" alt="Icono TU MEDICO DIGITAL">
+      <div class="install-banner-text">
+        <h4>📲 Instalar TU MEDICO DIGITAL</h4>
+        <p>Lleva el directorio siempre en la pantalla de inicio de tu dispositivo.</p>
+      </div>
+    </div>
+    <div class="install-banner-actions">
+      <button type="button" class="btn btn-sm btn-banner-install" onclick="triggerInstallApp()">Instalar App</button>
+      <button type="button" class="btn btn-sm btn-secondary" onclick="closeInstallBanner()">✕</button>
     </div>
   </div>
 
   <header>
-    <img src="icon-192.png" class="header-logo" alt="Logo Guía Médica Digital">
-    <h2>Guía Médica Digital</h2>
+    <img src="icon-192.png" class="header-logo" alt="Logo TU MEDICO DIGITAL">
+    <h2>TU MEDICO DIGITAL</h2>
     <p style="font-size: 12px; opacity: 0.9;">Directorio de Especialistas y Centros de Salud</p>
     <div class="sync-status" id="sync-status">🟢 Conectado con Google Sheets</div>
   </header>
 
   <div class="actions-bar">
-    <button class="btn btn-admin" onclick="openAdminModal()">⚙️ Administración</button>
-    <button class="btn btn-secondary btn-sm" onclick="openShareModal()">📲 Compartir App / QR</button>
+    <button type="button" class="btn btn-admin" onclick="openAdminModal()">⚙️ Administración</button>
+    <button type="button" class="btn btn-secondary btn-sm" onclick="openShareModal()">📲 Compartir App / QR</button>
   </div>
 
   <div class="search-box">
@@ -234,25 +247,29 @@
     <div class="modal-content">
       <div class="modal-header">
         <h3>🔐 Panel de Administración</h3>
-        <button class="modal-close" onclick="closeModal('modal-admin')">&times;</button>
+        <button type="button" class="modal-close" onclick="closeModal('modal-admin')">&times;</button>
       </div>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">Seleccione la herramienta de gestión que desea utilizar:</p>
+      
       <div class="admin-grid">
-        <button class="btn btn-primary" onclick="closeModal('modal-admin'); openModal('modal-doctor')">+ Agregar Nuevo Registro Médico</button>
-        <button class="btn btn-primary" onclick="closeModal('modal-admin'); openMetricsModal()">📊 Métricas de Consultas</button>
-        <button class="btn btn-secondary" onclick="closeModal('modal-admin'); fetchFromGoogleSheets()">🔄 Sincronizar con Google Sheets</button>
-        <button class="btn btn-secondary" onclick="closeModal('modal-admin'); exportData()">📥 Exportar Base de Datos (JSON)</button>
-        <button class="btn btn-secondary" onclick="closeModal('modal-admin'); changePasskey()">🔑 Cambiar Clave de Acceso</button>
+        <button type="button" class="btn btn-primary" onclick="closeModal('modal-admin'); openModal('modal-doctor')">+ Agregar Nuevo Registro Médico</button>
+        <button type="button" class="btn btn-primary" onclick="closeModal('modal-admin'); openMetricsModal()">📊 Métricas de Consultas</button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-admin'); fetchFromGoogleSheets()">🔄 Sincronizar con Google Sheets</button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-admin'); exportData()">📥 Exportar Base de Datos (JSON)</button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-admin'); changePasskey()">🔑 Cambiar Clave de Acceso</button>
       </div>
+
+      <hr style="margin: 14px 0; border: 0; border-top: 1px solid #e2e8f0;">
+      <h4 style="font-size: 14px; color: var(--primary-dark); margin-bottom: 10px;">Gestión de Médicos Registrados:</h4>
+      <div class="admin-doctors-list" id="admin-doctors-container"></div>
     </div>
   </div>
 
-  <!-- MODAL MÉDICO -->
+  <!-- MODAL MÉDICO (AGREGAR / EDITAR) -->
   <div class="modal" id="modal-doctor">
     <div class="modal-content">
       <div class="modal-header">
         <h3 id="modal-doc-title">Nuevo Registro Médico</h3>
-        <button class="modal-close" onclick="closeModal('modal-doctor')">&times;</button>
+        <button type="button" class="modal-close" onclick="closeModal('modal-doctor')">&times;</button>
       </div>
       <form id="form-doctor" onsubmit="saveDoctor(event)">
         <input type="hidden" id="doc-id">
@@ -314,23 +331,23 @@
     <div class="modal-content">
       <div class="modal-header">
         <h3>📊 Métricas de Consultas</h3>
-        <button class="modal-close" onclick="closeModal('modal-metrics')">&times;</button>
+        <button type="button" class="modal-close" onclick="closeModal('modal-metrics')">&times;</button>
       </div>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Conteo total de consultas realizadas por los usuarios a cada especialista o institución:</p>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Conteo total de interacciones realizadas por los usuarios:</p>
       <div class="metrics-list" id="metrics-container"></div>
       <div style="margin-top: 16px;">
-        <button class="btn btn-primary" style="width:100%; margin-bottom:8px;" onclick="sendMetricsEmail()">✉️ Enviar Informe PDF a Optimotor.ve@gmail.com</button>
-        <button class="btn btn-secondary" style="width:100%;" onclick="exportMetricsJSON()">📥 Exportar Métricas (JSON)</button>
+        <button type="button" class="btn btn-primary" style="width:100%; margin-bottom:8px;" onclick="sendMetricsEmail()">✉️ Enviar Informe a Optimotor.ve@gmail.com</button>
+        <button type="button" class="btn btn-secondary" style="width:100%;" onclick="exportMetricsJSON()">📥 Exportar Métricas (JSON)</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL REVIEWS -->
+  <!-- MODAL REVIEWS (PÚBLICO) -->
   <div class="modal" id="modal-reviews">
     <div class="modal-content">
       <div class="modal-header">
         <h3>Opiniones de Pacientes</h3>
-        <button class="modal-close" onclick="closeModal('modal-reviews')">&times;</button>
+        <button type="button" class="modal-close" onclick="closeModal('modal-reviews')">&times;</button>
       </div>
       <div id="reviews-doctor-name" style="font-weight:bold; margin-bottom:10px; color:var(--primary);"></div>
       <div class="comments-list" id="comments-container"></div>
@@ -356,12 +373,12 @@
     </div>
   </div>
 
-  <!-- MODAL HISTORY -->
+  <!-- MODAL HISTORY / CONSULTAS -->
   <div class="modal" id="modal-history">
     <div class="modal-content">
       <div class="modal-header">
         <h3>Histórico de Consultas</h3>
-        <button class="modal-close" onclick="closeModal('modal-history')">&times;</button>
+        <button type="button" class="modal-close" onclick="closeModal('modal-history')">&times;</button>
       </div>
       <div id="history-doctor-name" style="font-weight:bold; margin-bottom:10px; color:var(--primary);"></div>
       <div class="history-list" id="history-container"></div>
@@ -392,11 +409,11 @@
     <div class="modal-content" style="text-align:center;">
       <div class="modal-header">
         <h3>Código QR de Acceso</h3>
-        <button class="modal-close" onclick="closeModal('modal-share')">&times;</button>
+        <button type="button" class="modal-close" onclick="closeModal('modal-share')">&times;</button>
       </div>
       <p style="font-size:13px; color:#666;">Escanea para abrir la app en cualquier teléfono:</p>
       <div id="qrcode-container"></div>
-      <button class="btn btn-primary" onclick="copyAppURL()" style="width:100%; margin-top:10px;">📋 Copiar Enlace Directo</button>
+      <button type="button" class="btn btn-primary" onclick="copyAppURL()" style="width:100%; margin-top:10px;">📋 Copiar Enlace Directo</button>
     </div>
   </div>
 
@@ -409,37 +426,53 @@
       });
     }
 
-    let deferredPrompt;
-    const installModal = document.getElementById('pwa-install-modal');
-    const installBtn = document.getElementById('pwa-install-btn');
+    let deferredPrompt = null;
+    const installBanner = document.getElementById('install-banner');
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      installModal.style.display = 'flex';
-    });
-
-    installBtn.addEventListener('click', async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          installModal.style.display = 'none';
-        }
-        deferredPrompt = null;
-      } else {
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (isIOS) {
-          alert("Para instalar en iPhone/iPad:\n1. Toca el botón de compartir (el cuadrado con la flecha hacia arriba 📤 en tu barra inferior).\n2. Selecciona 'Agregar a inicio' (Add to Home Screen).");
-        } else {
-          alert("Para instalar la aplicación:\nAbre el menú de opciones de tu navegador (los tres puntos ⁝ arriba a la derecha) y selecciona 'Instalar aplicación' o 'Agregar a la pantalla principal'.");
-        }
-        installModal.style.display = 'none';
+      if (installBanner) {
+        installBanner.style.display = 'flex';
       }
     });
 
-    function closeInstallModal() {
-      installModal.style.display = 'none';
+    // Mostrar siempre el banner amistosamente si no está instalada en modo standalone
+    if (!window.matchMedia('(display-mode: standalone)').matches && !window.navigator.standalone) {
+      if (installBanner) {
+        installBanner.style.display = 'flex';
+      }
+    }
+
+    function closeInstallBanner() {
+      if (installBanner) {
+        installBanner.style.display = 'none';
+      }
+    }
+
+    async function triggerInstallApp() {
+      if (deferredPrompt) {
+        try {
+          deferredPrompt.prompt();
+          await deferredPrompt.userChoice;
+        } catch (err) {
+          console.log(err);
+        }
+        deferredPrompt = null;
+        closeInstallBanner();
+      } else {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+          alert("Para agregar el acceso directo en iPhone/iPad:\n1. Toca el botón Compartir (el cuadrado con la flecha hacia arriba) en la barra inferior de Safari.\n2. Selecciona 'Agregar a inicio'.");
+        } else {
+          alert("Para instalar el acceso directo en tu dispositivo:\nAbre el menú de opciones de tu navegador (los tres puntos ⋮ en la esquina superior derecha) y selecciona 'Instalar aplicación' o 'Agregar a la pantalla principal'.");
+        }
+        closeInstallBanner();
+      }
+    }
+
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+      closeInstallBanner();
     }
 
     const SPECIALTIES = [
@@ -492,6 +525,7 @@
             banners: typeof item.banners === 'string' ? item.banners.split(',').filter(b => b) : (Array.isArray(item.banners) ? item.banners : []),
             insurance: item.insurance === true || item.insurance === "TRUE" || item.insurance === "true",
             cashea: item.cashea === true || item.cashea === "TRUE" || item.cashea === "true",
+            notes: item.notes || "",
             expirationDate: item.expirationDate || "",
             queryCount: parseInt(item.queryCount || item.consultas || 0),
             reviews: item.reviews ? (typeof item.reviews === 'string' ? JSON.parse(item.reviews) : item.reviews) : [],
@@ -529,16 +563,51 @@
     function openAdminModal() {
       const entered = prompt("Ingrese la clave de autorización de administración:");
       if (entered === APP_PASSKEY) {
+        renderAdminDoctorsList();
         openModal('modal-admin');
       } else if (entered !== null) {
         alert("Clave incorrecta. Acceso de administración denegado.");
       }
     }
 
+    function renderAdminDoctorsList() {
+      const container = document.getElementById('admin-doctors-container');
+      container.innerHTML = "";
+      if (doctors.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:#888; padding:10px;">No hay médicos registrados.</p>`;
+        return;
+      }
+      doctors.forEach(doc => {
+        container.innerHTML += `
+          <div class="admin-doc-item">
+            <div>
+              <strong>${doc.name}</strong><br>
+              <span style="color:var(--text-muted);">${doc.specialty} • ${doc.clinic || 'Sin clínica'}</span>
+            </div>
+            <div class="admin-doc-actions">
+              <button type="button" class="btn btn-secondary btn-sm" style="flex:1" onclick="closeModal('modal-admin'); openHistoryModal('${doc.id}')">📋 Consultas</button>
+              <button type="button" class="btn btn-primary btn-sm" style="flex:1" onclick="closeModal('modal-admin'); editDoctor('${doc.id}')">✏️ Editar</button>
+              <button type="button" class="btn btn-danger btn-sm" onclick="deleteDoctorFromAdmin('${doc.id}')">🗑️</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    async function deleteDoctorFromAdmin(id) {
+      if (confirm('¿Desea eliminar definitivamente este registro médico?')) {
+        doctors = doctors.filter(d => d.id !== id);
+        saveData();
+        renderDoctors();
+        renderAdminDoctorsList();
+        await syncToGoogleSheets();
+      }
+    }
+
     function changePasskey() {
       const current = prompt("Ingrese la clave actual:");
       if (current === APP_PASSKEY) {
-        const newKey = prompt("Ingrese la nueva clave de acceso:");
+        const newKey = prompt("Ingrese la nueva clave de acceso (mínimo 6 caracteres):");
         if (newKey && newKey.length >= 6) {
           APP_PASSKEY = newKey;
           localStorage.setItem('app_med_passkey', APP_PASSKEY);
@@ -609,13 +678,13 @@
 
     function sendMetricsEmail() {
       const totalQueries = doctors.reduce((acc, d) => acc + (d.queryCount || 0), 0);
-      let bodyText = `Informe de Métricas - Guía Médica Digital%0D%0A`;
+      let bodyText = `Informe de Métricas - TU MEDICO DIGITAL%0D%0A`;
       bodyText += `Total de consultas registradas: ${totalQueries}%0D%0A%0D%0A`;
       doctors.forEach(d => {
         bodyText += `- ${d.name} (${d.specialty}): ${d.queryCount || 0} consultas%0D%0A`;
       });
       
-      window.location.href = `mailto:Optimotor.ve@gmail.com?subject=Informe%20de%20Métricas%20-%20Guía%20Médica%20Digital&body=${bodyText}`;
+      window.location.href = `mailto:Optimotor.ve@gmail.com?subject=Informe%20de%20Métricas%20-%20TU%20MEDICO%20DIGITAL&body=${bodyText}`;
     }
 
     function renderDoctors() {
@@ -680,8 +749,8 @@
               <div class="promo-carousel-box">
                 <img src="${banners[currentBannerIdx]}" id="banner-${doc.id}" alt="Imagen Promocional">
                 ${banners.length > 1 ? `
-                  <button class="carousel-btn prev" onclick="prevBanner('${doc.id}')">&lt;</button>
-                  <button class="carousel-btn next" onclick="nextBanner('${doc.id}')">&gt;</button>
+                  <button type="button" class="carousel-btn prev" onclick="prevBanner('${doc.id}')">&lt;</button>
+                  <button type="button" class="carousel-btn next" onclick="nextBanner('${doc.id}')">&gt;</button>
                 ` : ''}
               </div>
             </div>
@@ -694,28 +763,11 @@
               <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(doc.address || doc.clinic)}" target="_blank" class="btn btn-maps btn-sm" onclick="trackQuery('${doc.id}')">Mapa</a>
             </div>
             
-            <div style="display:flex; gap:6px; margin-top:6px;">
-              <button class="btn btn-secondary btn-sm" style="flex:1" onclick="openReviewsModal('${doc.id}')">Opiniones</button>
-              <!-- Botón Consultas (Historial) visible en cada tarjeta -->
-              <button class="btn btn-secondary btn-sm" style="flex:1" onclick="openHistoryModal('${doc.id}')">Consultas</button>
-              <!-- Botón Editar protegido por clave de administración -->
-              <button class="btn btn-secondary btn-sm" onclick="protectedAdminAction(() => editDoctor('${doc.id}'))">✏️ Editar</button>
-              <!-- Botón Papelera / Borrar protegido por clave de administración -->
-              <button class="btn btn-secondary btn-sm" style="background:var(--danger)" onclick="protectedAdminAction(() => deleteDoctor('${doc.id}'))">🗑️</button>
-            </div>
+            <button type="button" class="btn btn-secondary btn-sm" style="width:100%" onclick="openReviewsModal('${doc.id}')">⭐ Ver / Dejar Opiniones</button>
           </div>
         `;
         container.appendChild(card);
       });
-    }
-
-    function protectedAdminAction(callback) {
-      const entered = prompt("Ingrese la clave de administración para realizar esta acción:");
-      if (entered === APP_PASSKEY) {
-        callback();
-      } else if (entered !== null) {
-        alert("Clave incorrecta. Acción denegada.");
-      }
     }
 
     function prevBanner(docId) {
@@ -794,15 +846,6 @@
 
       document.getElementById('modal-doc-title').innerText = "Editar Registro Médico";
       openModal('modal-doctor');
-    }
-
-    async function deleteDoctor(id) {
-      if (confirm('¿Desea eliminar definitivamente este registro médico?')) {
-        doctors = doctors.filter(d => d.id !== id);
-        saveData();
-        renderDoctors();
-        await syncToGoogleSheets();
-      }
     }
 
     function openReviewsModal(docId) {
@@ -927,7 +970,7 @@
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(doctors, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `guia_medica_${new Date().toISOString().slice(0,10)}.json`);
+      downloadAnchor.setAttribute("download", `tu_medico_digital_${new Date().toISOString().slice(0,10)}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
