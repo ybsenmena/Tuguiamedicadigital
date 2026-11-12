@@ -12,9 +12,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="TU GUIA MEDICA DIGITAL">
   
-  <!-- Icono incrustado directamente (Favicon y Apple Touch Icon) -->
-  <link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="https://i.postimg.cc/fbSYL04G/icono-tu-guia-medica-digital.png' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%23b2f5ea'/%3E%3Cpath d='M256 448l-30.1-27.4C118.7 323.4 48 259.4 48 181 48 117 98.3 66.7 162.3 66.7c36.1 0 70.8 16.8 93.7 43.4 22.9-26.6 57.6-43.4 93.7-43.4C413.7 66.7 464 117 464 181c0 78.4-70.7 142.4-177.9 239.6L256 448z' fill='%23e53e3e'/%3E%3Cpath d='M120 230h55l25-55 45 110 40-85 25 30h82' fill='none' stroke='%23ffffff' stroke-width='26' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-  <link id="dynamic-apple-icon" rel="apple-touch-icon" href="https://i.postimg.cc/fbSYL04G/icono-tu-guia-medica-digital.png">
+  <!-- Enlaces de iconos dinámicos -->
+  <link id="dynamic-favicon" rel="icon" type="image/png" href="">
+  <link id="dynamic-apple-icon" rel="apple-touch-icon" href="">
 
   <!-- QRCode.js Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -211,9 +211,9 @@
   <!-- BANNER SUPERIOR DE INSTALACIÓN (ACCESO DIRECTO) -->
   <div id="install-banner">
     <div class="install-banner-content">
-      <img class="app-icon-img" alt="Icono TU MEDICO DIGITAL">
+      <img class="app-icon-img" alt="Icono TU GUIA MEDICA DIGITAL">
       <div class="install-banner-text">
-        <h4>📲 Instalar TU MEDICO DIGITAL</h4>
+        <h4>📲 Instalar TU GUIA MEDICA DIGITAL</h4>
         <p>Lleva el directorio siempre en la pantalla de inicio de tu dispositivo.</p>
       </div>
     </div>
@@ -420,88 +420,23 @@
   </div>
 
   <script>
+    // ==========================================
+    // PEGA AQUÍ TU ENLACE DIRECTO DE POSTIMAGES
+    // ==========================================
+    const APP_ICON_URL = "https://i.postimg.cc/fbSYL04G/icono-tu-guia-medica-digital.png";
+
+    // Inyectar automáticamente la URL en todos los elementos del icono
+    document.addEventListener("DOMContentLoaded", () => {
+      if (APP_ICON_URL && APP_ICON_URL !== "PEGAR_ENLACE_DIRECTO_AQUI") {
+        document.querySelectorAll('.app-icon-img').forEach(img => img.src = APP_ICON_URL);
+        const favicon = document.getElementById('dynamic-favicon');
+        const appleIcon = document.getElementById('dynamic-apple-icon');
+        if (favicon) favicon.href = APP_ICON_URL;
+        if (appleIcon) appleIcon.href = APP_ICON_URL;
+      }
+    });
+
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcsHHw64ZiFn9yEd6ltILWj__-pRwkO5kTFqK1flepas3MydpsNRVn3rzhKFKUZHhE4A/exec";
-
-    // Generador automático del icono 3D en Canvas (Funciona 100% sin depender de archivos externos en GitHub)
-    function generateAndInjectAppIcon() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 512;
-      canvas.height = 512;
-      const ctx = canvas.getContext('2d');
-
-      // Fondo menta redondeado
-      ctx.fillStyle = '#b9f6f0';
-      ctx.beginPath();
-      ctx.roundRect(0, 0, 512, 512, 110);
-      ctx.fill();
-
-      // Sombra del corazón
-      ctx.save();
-      ctx.shadowColor = 'rgba(130, 15, 15, 0.35)';
-      ctx.shadowBlur = 24;
-      ctx.shadowOffsetY = 14;
-
-      // Degradado 3D del corazón rojo
-      const grad = ctx.createRadialGradient(200, 170, 30, 256, 260, 220);
-      grad.addColorStop(0, '#ff5252');
-      grad.addColorStop(0.55, '#e51c23');
-      grad.addColorStop(1, '#9b0000');
-      ctx.fillStyle = grad;
-
-      // Trazado del corazón
-      ctx.beginPath();
-      ctx.moveTo(256, 435);
-      ctx.bezierCurveTo(256, 435, 75, 320, 75, 190);
-      ctx.bezierCurveTo(75, 115, 135, 75, 195, 75);
-      ctx.bezierCurveTo(230, 75, 250, 98, 256, 115);
-      ctx.bezierCurveTo(262, 98, 282, 75, 317, 75);
-      ctx.bezierCurveTo(377, 75, 437, 115, 437, 190);
-      ctx.bezierCurveTo(437, 320, 256, 435, 256, 435);
-      ctx.fill();
-      ctx.restore();
-
-      // Brillo superior izquierdo 3D
-      ctx.save();
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.28)';
-      ctx.beginPath();
-      ctx.ellipse(155, 150, 36, 18, -0.6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-
-      // Línea blanca de pulso cardíaco 3D
-      ctx.save();
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-      ctx.shadowBlur = 10;
-      ctx.shadowOffsetY = 6;
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 24;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-
-      ctx.beginPath();
-      ctx.moveTo(118, 240);
-      ctx.lineTo(175, 240);
-      ctx.lineTo(202, 182);
-      ctx.lineTo(245, 298);
-      ctx.lineTo(295, 165);
-      ctx.lineTo(335, 255);
-      ctx.lineTo(394, 232);
-      ctx.stroke();
-      ctx.restore();
-
-      const dataUrl = canvas.toDataURL('image/png');
-
-      // Inyectar en el encabezado, banner, favicon y apple-touch-icon
-      document.querySelectorAll('.app-icon-img').forEach(img => {
-        img.src = dataUrl;
-      });
-      const favicon = document.getElementById('dynamic-favicon');
-      const appleIcon = document.getElementById('dynamic-apple-icon');
-      if (favicon) { favicon.type = 'image/png'; favicon.href = dataUrl; }
-      if (appleIcon) { appleIcon.href = dataUrl; }
-    }
-
-    generateAndInjectAppIcon();
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -664,7 +599,7 @@
           <div class="admin-doc-item">
             <div>
               <strong>${doc.name}</strong><br>
-              <span style="color:var(--text-muted);">${doc.specialty} •${doc.clinic || 'Sin clínica'}</span>
+              <span style="color:var(--text-muted);">${doc.specialty} • ${doc.clinic || 'Sin clínica'}</span>
             </div>
             <div class="admin-doc-actions">
               <button type="button" class="btn btn-secondary btn-sm" style="flex:1" onclick="closeModal('modal-admin'); openHistoryModal('${doc.id}')">📋 Consultas</button>
@@ -746,7 +681,7 @@
             <div class="metric-item">
               <div>
                 <strong>${doc.name}</strong><br>
-                <span style="font-size:11px; color:var(--text-muted);">${doc.specialty} •${doc.clinic || 'Sin clínica'}</span>
+                <span style="font-size:11px; color:var(--text-muted);">${doc.specialty} • ${doc.clinic || 'Sin clínica'}</span>
               </div>
               <div style="background:var(--primary); color:white; padding:4px 10px; border-radius:12px; font-weight:bold; font-size:13px;">
                 ${doc.queryCount || 0} consultas
@@ -763,7 +698,10 @@
       let bodyText = `Informe de Métricas - TU MEDICO DIGITAL%0D%0A`;
       bodyText += `Total de consultas registradas: ${totalQueries}%0D%0A%0D%0A`;
       doctors.forEach(d => {
-        bodyText += `- ${d.name} (${d.specialty}): ${d.queryCount \vert{}\vert{} 0} consultas\%0D\%0A`; });  window.location.href = `mailto:Optimotor.ve@gmail.com?subject=Informe\%20de\%20Métricas\%20-\%20TU\%20MEDICO\%20DIGITAL&body=${bodyText}`;
+        bodyText += `- ${d.name} (${d.specialty}): ${d.queryCount || 0} consultas%0D%0A`;
+      });
+      
+      window.location.href = `mailto:Optimotor.ve@gmail.com?subject=Informe%20de%20Métricas%20-%20TU%20MEDICO%20DIGITAL&body=${bodyText}`;
     }
 
     function renderDoctors() {
@@ -808,4 +746,265 @@
               <div class="card-header-info">
                 <div class="card-title">${doc.name}</div>
                 <div class="card-subtitle">${doc.specialty}</div>
-                <div class="
+                <div class="rating-stars">${starsText}</div>
+              </div>
+            </div>
+
+            <div class="badge-container">
+              ${doc.insurance ? `<span class="badge badge-insurance">Acepta Seguro</span>` : ''}
+              ${doc.cashea ? `<span class="badge badge-cashea">${CASHEA_SVG} Cashea</span>` : ''}
+            </div>
+
+            <div class="card-info">
+              <strong>🏥 Centro:</strong> ${doc.clinic || 'No especificada'}<br>
+              <strong>🕒 Horario:</strong> ${doc.schedule || 'Consultar'}<br>
+              <strong>📍 Ubicación:</strong> ${doc.address || 'No registrada'}<br>
+              ${doc.notes ? `<strong>📝 Nota:</strong> ${doc.notes}` : ''}
+            </div>
+
+            <div class="promo-carousel-container">
+              <div class="promo-carousel-box">
+                <img src="${banners[currentBannerIdx]}" id="banner-${doc.id}" alt="Imagen Promocional">
+                ${banners.length > 1 ? `
+                  <button type="button" class="carousel-btn prev" onclick="prevBanner('${doc.id}')">&lt;</button>
+                  <button type="button" class="carousel-btn next" onclick="nextBanner('${doc.id}')">&gt;</button>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card-buttons">
+              <a href="https://wa.me/${doc.phone.replace(/[^0-9]/g, '')}?text=Hola%20${encodeURIComponent(doc.name)},%20quisiera%20solicitar%20información%20sobre%20su%20consulta." target="_blank" class="btn btn-success btn-sm" onclick="trackQuery('${doc.id}')">WhatsApp</a>
+              <a href="tel:${doc.phone}" class="btn btn-call btn-sm" onclick="trackQuery('${doc.id}')">Llamar</a>
+              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(doc.address || doc.clinic)}" target="_blank" class="btn btn-maps btn-sm" onclick="trackQuery('${doc.id}')">Mapa</a>
+            </div>
+            
+            <button type="button" class="btn btn-secondary btn-sm" style="width:100%" onclick="openReviewsModal('${doc.id}')">⭐ Ver / Dejar Opiniones</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function prevBanner(docId) {
+      const doc = doctors.find(d => d.id === docId);
+      const banners = (doc && doc.banners && doc.banners.length) ? doc.banners : DEFAULT_BANNERS;
+      activeCarouselIndexes[docId] = (activeCarouselIndexes[docId] - 1 + banners.length) % banners.length;
+      document.getElementById(`banner-${docId}`).src = banners[activeCarouselIndexes[docId]];
+    }
+
+    function nextBanner(docId) {
+      const doc = doctors.find(d => d.id === docId);
+      const banners = (doc && doc.banners && doc.banners.length) ? doc.banners : DEFAULT_BANNERS;
+      activeCarouselIndexes[docId] = (activeCarouselIndexes[docId] + 1) % banners.length;
+      document.getElementById(`banner-${docId}`).src = banners[activeCarouselIndexes[docId]];
+    }
+
+    async function saveDoctor(e) {
+      e.preventDefault();
+      const id = document.getElementById('doc-id').value;
+      const rawBanners = document.getElementById('doc-banners').value;
+      const bannersArr = rawBanners.split(',').map(b => b.trim()).filter(b => b.length > 0);
+
+      const regDate = id ? (doctors.find(d => d.id === id)?.registrationDate || new Date().toISOString()) : new Date().toISOString();
+      const expDate = id ? (doctors.find(d => d.id === id)?.expirationDate || new Date(new Date().getTime() + (365 * 24 * 60 * 60 * 1000)).toISOString()) : new Date(new Date().getTime() + (365 * 24 * 60 * 60 * 1000)).toISOString();
+      const queryCount = id ? (doctors.find(d => d.id === id)?.queryCount || 0) : 0;
+
+      const newDoc = {
+        id: id || Date.now().toString(),
+        name: document.getElementById('doc-name').value,
+        specialty: document.getElementById('doc-specialty').value,
+        photo: document.getElementById('doc-photo').value,
+        clinic: document.getElementById('doc-clinic').value,
+        phone: document.getElementById('doc-phone').value,
+        schedule: document.getElementById('doc-schedule').value,
+        address: document.getElementById('doc-address').value,
+        banners: bannersArr,
+        insurance: document.getElementById('doc-insurance').checked,
+        cashea: document.getElementById('doc-cashea').checked,
+        notes: document.getElementById('doc-notes').value,
+        registrationDate: regDate,
+        expirationDate: expDate,
+        queryCount: queryCount,
+        reviews: id ? (doctors.find(d => d.id === id)?.reviews || []) : [],
+        history: id ? (doctors.find(d => d.id === id)?.history || []) : []
+      };
+
+      if (id) {
+        doctors = doctors.map(d => d.id === id ? newDoc : d);
+      } else {
+        doctors.push(newDoc);
+      }
+
+      saveData();
+      closeModal('modal-doctor');
+      document.getElementById('form-doctor').reset();
+      renderDoctors();
+      await syncToGoogleSheets();
+    }
+
+    function editDoctor(id) {
+      const doc = doctors.find(d => d.id === id);
+      if (!doc) return;
+
+      document.getElementById('doc-id').value = doc.id;
+      document.getElementById('doc-name').value = doc.name;
+      document.getElementById('doc-specialty').value = doc.specialty;
+      document.getElementById('doc-photo').value = doc.photo || '';
+      document.getElementById('doc-clinic').value = doc.clinic || '';
+      document.getElementById('doc-phone').value = doc.phone;
+      document.getElementById('doc-schedule').value = doc.schedule || '';
+      document.getElementById('doc-address').value = doc.address || '';
+      document.getElementById('doc-banners').value = (doc.banners || []).join(', ');
+      document.getElementById('doc-insurance').checked = doc.insurance;
+      document.getElementById('doc-cashea').checked = doc.cashea;
+      document.getElementById('doc-notes').value = doc.notes || '';
+
+      document.getElementById('modal-doc-title').innerText = "Editar Registro Médico";
+      openModal('modal-doctor');
+    }
+
+    function openReviewsModal(docId) {
+      const doc = doctors.find(d => d.id === docId);
+      if (!doc) return;
+      document.getElementById('review-doc-id').value = docId;
+      document.getElementById('reviews-doctor-name').innerText = doc.name;
+      
+      const container = document.getElementById('comments-container');
+      container.innerHTML = doc.reviews && doc.reviews.length ? '' : '<p>Sin opiniones registradas.</p>';
+
+      (doc.reviews || []).forEach(r => {
+        container.innerHTML += `
+          <div class="comment-item">
+            <div>${'⭐'.repeat(r.rating)}</div>
+            <div>${r.text}</div>
+          </div>
+        `;
+      });
+      openModal('modal-reviews');
+    }
+
+    async function saveReview(e) {
+      e.preventDefault();
+      const docId = document.getElementById('review-doc-id').value;
+      const rating = parseInt(document.getElementById('review-rating').value);
+      const text = document.getElementById('review-text').value;
+
+      doctors = doctors.map(d => {
+        if (d.id === docId) {
+          if (!d.reviews) d.reviews = [];
+          d.reviews.push({ rating, text, date: new Date().toISOString() });
+        }
+        return d;
+      });
+
+      saveData();
+      closeModal('modal-reviews');
+      document.getElementById('form-review').reset();
+      renderDoctors();
+      await syncToGoogleSheets();
+    }
+
+    function getAverageRating(reviews) {
+      if (!reviews || reviews.length === 0) return 0;
+      const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+      return (sum / reviews.length).toFixed(1);
+    }
+
+    function openHistoryModal(docId) {
+      const doc = doctors.find(d => d.id === docId);
+      if (!doc) return;
+      document.getElementById('history-doc-id').value = docId;
+      document.getElementById('history-doctor-name').innerText = doc.name;
+      
+      const container = document.getElementById('history-container');
+      container.innerHTML = doc.history && doc.history.length ? '' : '<p>Sin consultas registradas.</p>';
+
+      (doc.history || []).forEach(h => {
+        container.innerHTML += `
+          <div class="history-item">
+            <strong>📅 ${h.date} - Paciente: ${h.patient}</strong>
+            <div>${h.notes}</div>
+          </div>
+        `;
+      });
+      openModal('modal-history');
+    }
+
+    async function saveHistoryEntry(e) {
+      e.preventDefault();
+      const docId = document.getElementById('history-doc-id').value;
+      const date = document.getElementById('history-date').value;
+      const patient = document.getElementById('history-patient').value;
+      const notes = document.getElementById('history-notes').value;
+
+      doctors = doctors.map(d => {
+        if (d.id === docId) {
+          if (!d.history) d.history = [];
+          d.history.push({ date, patient, notes });
+        }
+        return d;
+      });
+
+      saveData();
+      closeModal('modal-history');
+      document.getElementById('form-history').reset();
+      await syncToGoogleSheets();
+    }
+
+    function openShareModal() {
+      const qrContainer = document.getElementById('qrcode-container');
+      qrContainer.innerHTML = "";
+      new QRCode(qrContainer, {
+        text: window.location.href,
+        width: 180,
+        height: 180
+      });
+      openModal('modal-share');
+    }
+
+    function copyAppURL() {
+      navigator.clipboard.writeText(window.location.href);
+      alert("¡Enlace copiado al portapapeles!");
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { 
+      document.getElementById(id).classList.remove('active');
+      if(id === 'modal-doctor') {
+        document.getElementById('doc-id').value = '';
+        document.getElementById('modal-doc-title').innerText = "Nuevo Registro Médico";
+        document.getElementById('form-doctor').reset();
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem('app_med_doctors', JSON.stringify(doctors));
+    }
+
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(doctors, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `tu_medico_digital_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function exportMetricsJSON() {
+      const metrics = doctors.map(d => ({ name: d.name, specialty: d.specialty, clinic: d.clinic, consultas: d.queryCount || 0 }));
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(metrics, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `metricas_consultas_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    init();
+  </script>
+</body>
+</html>
