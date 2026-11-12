@@ -1,23 +1,20 @@
 {
-  "short_name": "Guía Médica",
-  "name": "Guía Médica Digital",
+  "name": "TU MEDICO DIGITAL",
+  "short_name": "Medicos",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f7f9",
+  "theme_color": "#0077b6",
   "icons": [
     {
       "src": "icon-192.png",
-      "type": "image/png",
       "sizes": "192x192",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
       "src": "icon-512.png",
-      "type": "image/png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
-  ],
-  "start_url": "./index.html",
-  "background_color": "#0077b6",
-  "theme_color": "#0077b6",
-  "display": "standalone",
-  "orientation": "portrait"
+  ]
 }
