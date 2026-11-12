@@ -30,6 +30,7 @@
       --success: #25d366;
       --cashea-yellow: #ffeb00;
       --danger: #dc3545;
+      --admin-color: #475569;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
@@ -40,6 +41,7 @@
       color: white; padding: 16px; border-radius: 12px; margin-bottom: 16px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;
       display: flex; flex-direction: column; align-items: center;
+      position: relative;
     }
 
     .header-logo {
@@ -70,6 +72,8 @@
     .btn-success { background: var(--success); color: white; }
     .btn-call { background: #0d6efd; color: white; }
     .btn-maps { background: #ea4335; color: white; }
+    .btn-admin { background: #334155; color: white; font-weight: 700; border: 1px solid #475569; }
+    .btn-admin:hover { background: #1e293b; }
     .btn-sm { padding: 6px 10px; font-size: 12px; }
 
     .actions-bar {
@@ -130,27 +134,29 @@
     .card-info { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.5; }
     .card-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
 
+    /* Modal de Instalación Obligatorio (Bloqueante al ingresar) */
     #pwa-install-modal {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.75); z-index: 99999;
+      display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85); z-index: 99999;
       justify-content: center; align-items: center; padding: 20px;
     }
     .install-dialog {
-      background: white; border-radius: 16px; padding: 24px; max-width: 380px; width: 100%;
-      text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.3); animation: scaleIn 0.3s ease;
+      background: white; border-radius: 16px; padding: 26px; max-width: 400px; width: 100%;
+      text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4); animation: scaleIn 0.3s ease;
     }
     @keyframes scaleIn {
       from { transform: scale(0.9); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
-    .install-dialog img { width: 68px; height: 68px; object-fit: contain; margin-bottom: 12px; }
+    .install-dialog img { width: 72px; height: 72px; object-fit: contain; margin-bottom: 12px; }
     .install-dialog h3 { color: var(--primary-dark); margin-bottom: 10px; font-size: 20px; }
     .install-dialog p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
     .install-dialog button {
       background: var(--cashea-yellow); color: black; border: none; font-weight: 800;
-      padding: 12px 20px; border-radius: 10px; cursor: pointer; font-size: 15px; width: 100%;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 14px 20px; border-radius: 10px; cursor: pointer; font-size: 15px; width: 100%;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: 0.2s;
     }
+    .install-dialog button:hover { background: #e5d300; }
 
     .modal {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -176,17 +182,20 @@
     .comments-list, .history-list, .metrics-list { font-size: 12px; max-height: 250px; overflow-y: auto; margin-bottom: 10px; }
     .comment-item, .history-item, .metric-item { background: #f1f3f5; padding: 10px; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 
+    .admin-grid { display: grid; gap: 10px; grid-template-columns: 1fr; margin-top: 10px; }
+    
     #qrcode-container { display: flex; justify-content: center; margin: 16px 0; }
   </style>
 </head>
 <body>
 
+  <!-- MODAL DE INSTALACIÓN OBLIGATORIO AL INGRESAR -->
   <div id="pwa-install-modal">
     <div class="install-dialog">
       <img src="icon-192.png" alt="Icono Guía Médica Digital">
       <h3>Instalar Guía Médica Digital</h3>
-      <p>Para disfrutar de la Guía Médica Digital con acceso rápido y sin conexión, instala la aplicación en tu pantalla de inicio.</p>
-      <button id="pwa-install-btn">INSTALAR APLICACIÓN</button>
+      <p>Para continuar utilizando la aplicación, es obligatorio instalarla en la pantalla de inicio de tu teléfono o escritorio para un acceso rápido y seguro.</p>
+      <button id="pwa-install-btn">INSTALAR APLICACIÓN AHORA</button>
     </div>
   </div>
 
@@ -198,13 +207,9 @@
   </header>
 
   <div class="actions-bar">
-    <button class="btn btn-primary" onclick="protectedAction(() => openModal('modal-doctor'))">+ Agregar Médico</button>
+    <!-- ÚNICO BOTÓN VISIBLE PARA EL USUARIO COMÚN -->
+    <button class="btn btn-admin" onclick="openAdminModal()">⚙️ Administración</button>
     <button class="btn btn-secondary btn-sm" onclick="openShareModal()">📲 Compartir App / QR</button>
-    <button class="btn btn-secondary btn-sm" onclick="changePasskey()">🔑 Cambiar Clave</button>
-    <div>
-      <button class="btn btn-secondary btn-sm" onclick="fetchFromGoogleSheets()">🔄 Sincronizar</button>
-      <button class="btn btn-secondary btn-sm" onclick="exportData()">📥 Exportar JSON</button>
-    </div>
   </div>
 
   <div class="search-box">
@@ -216,6 +221,25 @@
 
   <div class="cards-container" id="doctors-container"></div>
 
+  <!-- MODAL DE PANEL DE ADMINISTRACIÓN (PROTEGIDO POR CLAVE DE 10 DÍGITOS) -->
+  <div class="modal" id="modal-admin">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>🔐 Panel de Administración</h3>
+        <button class="modal-close" onclick="closeModal('modal-admin')">&times;</button>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">Seleccione la herramienta de gestión que desea utilizar:</p>
+      <div class="admin-grid">
+        <button class="btn btn-primary" onclick="closeModal('modal-admin'); openModal('modal-doctor')">+ Agregar Nuevo Registro Médico</button>
+        <button class="btn btn-primary" onclick="closeModal('modal-admin'); openMetricsModal()">📊 Métricas de Consultas</button>
+        <button class="btn btn-secondary" onclick="closeModal('modal-admin'); fetchFromGoogleSheets()">🔄 Sincronizar con Google Sheets</button>
+        <button class="btn btn-secondary" onclick="closeModal('modal-admin'); exportData()">📥 Exportar Base de Datos (JSON)</button>
+        <button class="btn btn-secondary" onclick="closeModal('modal-admin'); changePasskey()">🔑 Cambiar Clave de Acceso</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL MÉDICO (AGREGAR / EDITAR) -->
   <div class="modal" id="modal-doctor">
     <div class="modal-content">
       <div class="modal-header">
@@ -277,6 +301,7 @@
     </div>
   </div>
 
+  <!-- MODAL MÉTRICAS -->
   <div class="modal" id="modal-metrics">
     <div class="modal-content">
       <div class="modal-header">
@@ -292,602 +317,11 @@
     </div>
   </div>
 
+  <!-- MODAL REVIEWS -->
   <div class="modal" id="modal-reviews">
     <div class="modal-content">
       <div class="modal-header">
         <h3>Opiniones de Pacientes</h3>
         <button class="modal-close" onclick="closeModal('modal-reviews')">&times;</button>
       </div>
-      <div id="reviews-doctor-name" style="font-weight:bold; margin-bottom:10px; color:var(--primary);"></div>
-      <div class="comments-list" id="comments-container"></div>
-      <hr style="margin:10px 0;">
-      <form id="form-review" onsubmit="saveReview(event)">
-        <input type="hidden" id="review-doc-id">
-        <div class="form-group">
-          <label>Puntuación</label>
-          <select id="review-rating">
-            <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
-            <option value="4">⭐⭐⭐⭐ (4/5)</option>
-            <option value="3">⭐⭐⭐ (3/5)</option>
-            <option value="2">⭐⭐ (2/5)</option>
-            <option value="1">⭐ (1/5)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Tu Opinión</label>
-          <textarea id="review-text" rows="2" required placeholder="Escribe tu experiencia..."></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width:100%">Enviar Opinión</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="modal" id="modal-history">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Histórico de Consultas</h3>
-        <button class="modal-close" onclick="closeModal('modal-history')">&times;</button>
-      </div>
-      <div id="history-doctor-name" style="font-weight:bold; margin-bottom:10px; color:var(--primary);"></div>
-      <div class="history-list" id="history-container"></div>
-      <hr style="margin:10px 0;">
-      <form id="form-history" onsubmit="saveHistoryEntry(event)">
-        <input type="hidden" id="history-doc-id">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Fecha *</label>
-            <input type="date" id="history-date" required>
-          </div>
-          <div class="form-group">
-            <label>Paciente *</label>
-            <input type="text" id="history-patient" required placeholder="Nombre completo">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Motivo / Diagnóstico *</label>
-          <textarea id="history-notes" rows="2" required placeholder="Resumen médico..."></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width:100%">Registrar Consulta</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="modal" id="modal-share">
-    <div class="modal-content" style="text-align:center;">
-      <div class="modal-header">
-        <h3>Código QR de Acceso</h3>
-        <button class="modal-close" onclick="closeModal('modal-share')">&times;</button>
-      </div>
-      <p style="font-size:13px; color:#666;">Escanea para abrir la app en cualquier teléfono:</p>
-      <div id="qrcode-container"></div>
-      <button class="btn btn-primary" onclick="copyAppURL()" style="width:100%; margin-top:10px;">📋 Copiar Enlace Directo</button>
-    </div>
-  </div>
-
-  <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcsHHw64ZiFn9yEd6ltILWj__-pRwkO5kTFqK1flepas3MydpsNRVn3rzhKFKUZHhE4A/exec";
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error:', err));
-      });
-    }
-
-    let deferredPrompt;
-    const installModal = document.getElementById('pwa-install-modal');
-    const installBtn = document.getElementById('pwa-install-btn');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installModal.style.display = 'flex';
-    });
-
-    installBtn.addEventListener('click', async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt = null;
-        installModal.style.display = 'none';
-      } else {
-        alert("Para instalar la app, usa el menú de tu navegador y selecciona 'Agregar a la pantalla principal'.");
-        installModal.style.display = 'none';
-      }
-    });
-
-    const SPECIALTIES = [
-      "Alergología", "Anestesiología", "Cardiología", "Cirugía General", "Cirugía Plástica",
-      "Dermatología", "Emergenciología", "Endocrinología", "Fisioterapia / Rehabilitación",
-      "Gastroenterología", "Ginecología y Obstetricia", "Hematología", "Infectología",
-      "Laboratorio Clínico", "Medicina General", "Medicina Interna", "Nefrología", 
-      "Neumonología", "Neurología", "Nutrición y Dietética", "Odontología", "Oftalmología",
-      "Oncología", "Otorrinolaringología", "Pediatría", "Psiquiatría / Psicología",
-      "Radiología / Imágenes", "Traumatología y Ortopedia", "Urología"
-    ];
-
-    const CASHEA_SVG = `
-      <svg class="cashea-svg-icon" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M250 50C180 50 110 120 110 250C110 380 180 450 250 450C320 450 380 390 380 320H280C280 340 265 350 250 350C195 350 190 290 190 250C190 210 195 150 250 150C265 150 280 160 280 180H380C380 110 320 50 250 50Z" fill="black"/>
-      </svg>
-    `;
-
-    const DEFAULT_AVATAR = "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80";
-    const DEFAULT_BANNERS = [
-      "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&auto=format&fit=crop&q=80"
-    ];
-
-    let doctors = JSON.parse(localStorage.getItem('app_med_doctors')) || [];
-    let APP_PASSKEY = localStorage.getItem('app_med_passkey') || "123456789*";
-    let activeCarouselIndexes = {};
-
-    function init() {
-      populateSpecialties();
-      fetchFromGoogleSheets();
-    }
-
-    async function fetchFromGoogleSheets() {
-      const statusEl = document.getElementById('sync-status');
-      statusEl.innerHTML = "⏳ Sincronizando con Google Sheets...";
-      try {
-        const response = await fetch(GOOGLE_SCRIPT_URL);
-        const data = await response.json();
-        if (Array.isArray(data) && data.length > 0) {
-          doctors = data.map(item => ({
-            id: String(item.id || Date.now()),
-            name: item.name || "",
-            specialty: item.specialty || "",
-            clinic: item.clinic || "",
-            phone: String(item.phone || ""),
-            schedule: item.schedule || "",
-            address: item.address || "",
-            photo: item.photo || "",
-            banners: typeof item.banners === 'string' ? item.banners.split(',').filter(b => b) : (Array.isArray(item.banners) ? item.banners : []),
-            insurance: item.insurance === true || item.insurance === "TRUE" || item.insurance === "true",
-            cashea: item.cashea === true || item.cashea === "TRUE" || item.cashea === "true",
-            expirationDate: item.expirationDate || "",
-            queryCount: parseInt(item.queryCount || item.consultas || 0),
-            reviews: item.reviews ? (typeof item.reviews === 'string' ? JSON.parse(item.reviews) : item.reviews) : [],
-            history: item.history ? (typeof item.history === 'string' ? JSON.parse(item.history) : item.history) : []
-          }));
-          localStorage.setItem('app_med_doctors', JSON.stringify(doctors));
-          statusEl.innerHTML = "🟢 Conectado con Google Sheets";
-        } else {
-          statusEl.innerHTML = "🟢 Conectado (Hoja Lista)";
-        }
-      } catch (err) {
-        console.warn("Error al cargar de Google Sheets, usando respaldo local:", err);
-        statusEl.innerHTML = "🟠 Modo Desconectado (Guardado Local)";
-      }
-      renderDoctors();
-    }
-
-    async function syncToGoogleSheets() {
-      const statusEl = document.getElementById('sync-status');
-      statusEl.innerHTML = "⏳ Guardando en Google Sheets...";
-      try {
-        await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(doctors)
-        });
-        statusEl.innerHTML = "🟢 Conectado con Google Sheets";
-      } catch (err) {
-        console.error("Error guardando en Google Sheets:", err);
-        statusEl.innerHTML = "🔴 Error al guardar en la nube";
-      }
-    }
-
-    function protectedAction(callback) {
-      const entered = prompt("Ingrese la clave de autorización de equipo:");
-      if (entered === APP_PASSKEY) {
-        callback();
-      } else if (entered !== null) {
-        alert("Clave incorrecta. Acceso denegado.");
-      }
-    }
-
-    function changePasskey() {
-      const current = prompt("Ingrese la clave actual:");
-      if (current === APP_PASSKEY) {
-        const newKey = prompt("Ingrese la nueva clave (mínimo 6 caracteres):");
-        if (newKey && newKey.length >= 6) {
-          APP_PASSKEY = newKey;
-          localStorage.setItem('app_med_passkey', APP_PASSKEY);
-          alert("¡Clave actualizada exitosamente!");
-        } else {
-          alert("La clave no es válida o es muy corta.");
-        }
-      } else if (current !== null) {
-        alert("Clave actual incorrecta.");
-      }
-    }
-
-    function populateSpecialties() {
-      const filterSelect = document.getElementById('filter-specialty');
-      const formSelect = document.getElementById('doc-specialty');
-      SPECIALTIES.forEach(sp => {
-        filterSelect.innerHTML += `<option value="${sp}">${sp}</option>`;
-        formSelect.innerHTML += `<option value="${sp}">${sp}</option>`;
-      });
-    }
-
-    async function trackQuery(docId) {
-      doctors = doctors.map(d => {
-        if (d.id === docId) {
-          d.queryCount = (d.queryCount || 0) + 1;
-        }
-        return d;
-      });
-      saveData();
-      await syncToGoogleSheets();
-    }
-
-    function handleSearchInput() {
-      const search = document.getElementById('search-input').value.toLowerCase().trim();
-      renderDoctors();
-      if (search.length > 2) {
-        doctors.forEach(doc => {
-          if (doc.name.toLowerCase().includes(search) || doc.specialty.toLowerCase().includes(search) || (doc.clinic && doc.clinic.toLowerCase().includes(search))) {
-            doc.queryCount = (doc.queryCount || 0) + 1;
-          }
-        });
-        saveData();
-      }
-    }
-
-    function openMetricsModal() {
-      protectedAction(() => {
-        const container = document.getElementById('metrics-container');
-        container.innerHTML = "";
-        if (doctors.length === 0) {
-          container.innerHTML = `<p style="text-align:center; color:#888;">No hay registros médicos en este momento.</p>`;
-        } else {
-          doctors.forEach(doc => {
-            container.innerHTML += `
-              <div class="metric-item">
-                <div>
-                  <strong>${doc.name}</strong><br>
-                  <span style="font-size:11px; color:var(--text-muted);">${doc.specialty} • ${doc.clinic || 'Sin clínica'}</span>
-                </div>
-                <div style="background:var(--primary); color:white; padding:4px 10px; border-radius:12px; font-weight:bold; font-size:13px;">
-                  ${doc.queryCount || 0} consultas
-                </div>
-              </div>
-            `;
-          });
-        }
-        openModal('modal-metrics');
-      });
-    }
-
-    function sendMetricsEmail() {
-      const totalQueries = doctors.reduce((acc, d) => acc + (d.queryCount || 0), 0);
-      let bodyText = `Informe de Métricas - Guía Médica Digital%0D%0A`;
-      bodyText += `Total de consultas registradas: ${totalQueries}%0D%0A%0D%0A`;
-      doctors.forEach(d => {
-        bodyText += `- ${d.name} (${d.specialty}): ${d.queryCount || 0} consultas%0D%0A`;
-      });
-      
-      window.location.href = `mailto:Optimotor.ve@gmail.com?subject=Informe%20de%20Métricas%20-%20Guía%20Médica%20Digital&body=${bodyText}`;
-    }
-
-    function renderDoctors() {
-      const container = document.getElementById('doctors-container');
-      const search = document.getElementById('search-input').value.toLowerCase();
-      const filterSp = document.getElementById('filter-specialty').value;
-      const nowMs = new Date().getTime();
-
-      const filtered = doctors.filter(doc => {
-        const expMs = doc.expirationDate ? new Date(doc.expirationDate).getTime() : Infinity;
-        if (nowMs > expMs) return false;
-
-        const matchSearch = doc.name.toLowerCase().includes(search) || 
-                            (doc.clinic && doc.clinic.toLowerCase().includes(search)) ||
-                            doc.specialty.toLowerCase().includes(search);
-        const matchSp = filterSp === "" || doc.specialty === filterSp;
-        return matchSearch && matchSp;
-      });
-
-      container.innerHTML = "";
-
-      if (filtered.length === 0) {
-        container.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color:#888; padding:30px;">No hay registros activos en este momento.</p>`;
-        return;
-      }
-
-      filtered.forEach(doc => {
-        const avgRating = getAverageRating(doc.reviews);
-        const starsText = doc.reviews && doc.reviews.length ? `⭐ ${avgRating} (${doc.reviews.length})` : 'Sin valoraciones';
-        const photoUrl = doc.photo && doc.photo.trim() !== "" ? doc.photo : DEFAULT_AVATAR;
-        const banners = (doc.banners && doc.banners.length > 0) ? doc.banners : DEFAULT_BANNERS;
-
-        if (!(doc.id in activeCarouselIndexes)) activeCarouselIndexes[doc.id] = 0;
-        const currentBannerIdx = activeCarouselIndexes[doc.id] % banners.length;
-
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div>
-            <div class="card-top-section">
-              <img src="${photoUrl}" class="doc-avatar" alt="Foto ${doc.name}">
-              <div class="card-header-info">
-                <div class="card-title">${doc.name}</div>
-                <div class="card-subtitle">${doc.specialty}</div>
-                <div class="rating-stars">${starsText}</div>
-              </div>
-            </div>
-
-            <div class="badge-container">
-              ${doc.insurance ? `<span class="badge badge-insurance">Acepta Seguro</span>` : ''}
-              ${doc.cashea ? `<span class="badge badge-cashea">${CASHEA_SVG} Cashea</span>` : ''}
-            </div>
-
-            <div class="card-info">
-              <strong>🏥 Centro:</strong> ${doc.clinic || 'No especificada'}<br>
-              <strong>🕒 Horario:</strong> ${doc.schedule || 'Consultar'}<br>
-              <strong>📍 Ubicación:</strong> ${doc.address || 'No registrada'}<br>
-              ${doc.notes ? `<strong>📝 Nota:</strong> ${doc.notes}` : ''}
-            </div>
-
-            <div class="promo-carousel-container">
-              <div class="promo-carousel-box">
-                <img src="${banners[currentBannerIdx]}" id="banner-${doc.id}" alt="Imagen Promocional">
-                ${banners.length > 1 ? `
-                  <button class="carousel-btn prev" onclick="prevBanner('${doc.id}')">&lt;</button>
-                  <button class="carousel-btn next" onclick="nextBanner('${doc.id}')">&gt;</button>
-                ` : ''}
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div class="card-buttons">
-              <a href="https://wa.me/${doc.phone.replace(/[^0-9]/g, '')}?text=Hola%20${encodeURIComponent(doc.name)},%20quisiera%20solicitar%20información%20sobre%20su%20consulta." target="_blank" class="btn btn-success btn-sm" onclick="trackQuery('${doc.id}')">WhatsApp</a>
-              <a href="tel:${doc.phone}" class="btn btn-call btn-sm" onclick="trackQuery('${doc.id}')">Llamar</a>
-              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(doc.address || doc.clinic)}" target="_blank" class="btn btn-maps btn-sm" onclick="trackQuery('${doc.id}')">Mapa</a>
-            </div>
-            
-            <div style="display:flex; gap:4px; margin-top:6px;">
-              <button class="btn btn-primary btn-sm" style="flex:1" onclick="openMetricsModal()">📊 Métricas</button>
-              <button class="btn btn-secondary btn-sm" style="flex:1" onclick="openReviewsModal('${doc.id}')">Opiniones</button>
-              <button class="btn btn-secondary btn-sm" style="flex:1" onclick="openHistoryModal('${doc.id}')">Consultas</button>
-              <button class="btn btn-secondary btn-sm" onclick="protectedAction(() => editDoctor('${doc.id}'))">✏️</button>
-              <button class="btn btn-secondary btn-sm" style="background:var(--danger)" onclick="protectedAction(() => deleteDoctor('${doc.id}'))">🗑️</button>
-            </div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    function prevBanner(docId) {
-      const doc = doctors.find(d => d.id === docId);
-      const banners = (doc && doc.banners && doc.banners.length) ? doc.banners : DEFAULT_BANNERS;
-      activeCarouselIndexes[docId] = (activeCarouselIndexes[docId] - 1 + banners.length) % banners.length;
-      document.getElementById(`banner-${docId}`).src = banners[activeCarouselIndexes[docId]];
-    }
-
-    function nextBanner(docId) {
-      const doc = doctors.find(d => d.id === docId);
-      const banners = (doc && doc.banners && doc.banners.length) ? doc.banners : DEFAULT_BANNERS;
-      activeCarouselIndexes[docId] = (activeCarouselIndexes[docId] + 1) % banners.length;
-      document.getElementById(`banner-${docId}`).src = banners[activeCarouselIndexes[docId]];
-    }
-
-    async function saveDoctor(e) {
-      e.preventDefault();
-      const id = document.getElementById('doc-id').value;
-      const rawBanners = document.getElementById('doc-banners').value;
-      const bannersArr = rawBanners.split(',').map(b => b.trim()).filter(b => b.length > 0);
-
-      const regDate = id ? (doctors.find(d => d.id === id)?.registrationDate || new Date().toISOString()) : new Date().toISOString();
-      const expDate = id ? (doctors.find(d => d.id === id)?.expirationDate || new Date(new Date().getTime() + (365 * 24 * 60 * 60 * 1000)).toISOString()) : new Date(new Date().getTime() + (365 * 24 * 60 * 60 * 1000)).toISOString();
-      const queryCount = id ? (doctors.find(d => d.id === id)?.queryCount || 0) : 0;
-
-      const newDoc = {
-        id: id || Date.now().toString(),
-        name: document.getElementById('doc-name').value,
-        specialty: document.getElementById('doc-specialty').value,
-        photo: document.getElementById('doc-photo').value,
-        clinic: document.getElementById('doc-clinic').value,
-        phone: document.getElementById('doc-phone').value,
-        schedule: document.getElementById('doc-schedule').value,
-        address: document.getElementById('doc-address').value,
-        banners: bannersArr,
-        insurance: document.getElementById('doc-insurance').checked,
-        cashea: document.getElementById('doc-cashea').checked,
-        notes: document.getElementById('doc-notes').value,
-        registrationDate: regDate,
-        expirationDate: expDate,
-        queryCount: queryCount,
-        reviews: id ? (doctors.find(d => d.id === id)?.reviews || []) : [],
-        history: id ? (doctors.find(d => d.id === id)?.history || []) : []
-      };
-
-      if (id) {
-        doctors = doctors.map(d => d.id === id ? newDoc : d);
-      } else {
-        doctors.push(newDoc);
-      }
-
-      saveData();
-      closeModal('modal-doctor');
-      document.getElementById('form-doctor').reset();
-      renderDoctors();
-      await syncToGoogleSheets();
-    }
-
-    function editDoctor(id) {
-      const doc = doctors.find(d => d.id === id);
-      if (!doc) return;
-
-      document.getElementById('doc-id').value = doc.id;
-      document.getElementById('doc-name').value = doc.name;
-      document.getElementById('doc-specialty').value = doc.specialty;
-      document.getElementById('doc-photo').value = doc.photo || '';
-      document.getElementById('doc-clinic').value = doc.clinic || '';
-      document.getElementById('doc-phone').value = doc.phone;
-      document.getElementById('doc-schedule').value = doc.schedule || '';
-      document.getElementById('doc-address').value = doc.address || '';
-      document.getElementById('doc-banners').value = (doc.banners || []).join(', ');
-      document.getElementById('doc-insurance').checked = doc.insurance;
-      document.getElementById('doc-cashea').checked = doc.cashea;
-      document.getElementById('doc-notes').value = doc.notes || '';
-
-      document.getElementById('modal-doc-title').innerText = "Editar Registro Médico";
-      openModal('modal-doctor');
-    }
-
-    async function deleteDoctor(id) {
-      if (confirm('¿Desea eliminar definitivamente este registro médico?')) {
-        doctors = doctors.filter(d => d.id !== id);
-        saveData();
-        renderDoctors();
-        await syncToGoogleSheets();
-      }
-    }
-
-    function openReviewsModal(docId) {
-      const doc = doctors.find(d => d.id === docId);
-      if (!doc) return;
-      document.getElementById('review-doc-id').value = docId;
-      document.getElementById('reviews-doctor-name').innerText = doc.name;
-      
-      const container = document.getElementById('comments-container');
-      container.innerHTML = doc.reviews && doc.reviews.length ? '' : '<p>Sin opiniones registradas.</p>';
-
-      (doc.reviews || []).forEach(r => {
-        container.innerHTML += `
-          <div class="comment-item">
-            <div>${'⭐'.repeat(r.rating)}</div>
-            <div>${r.text}</div>
-          </div>
-        `;
-      });
-      openModal('modal-reviews');
-    }
-
-    async function saveReview(e) {
-      e.preventDefault();
-      const docId = document.getElementById('review-doc-id').value;
-      const rating = parseInt(document.getElementById('review-rating').value);
-      const text = document.getElementById('review-text').value;
-
-      doctors = doctors.map(d => {
-        if (d.id === docId) {
-          if (!d.reviews) d.reviews = [];
-          d.reviews.push({ rating, text, date: new Date().toISOString() });
-        }
-        return d;
-      });
-
-      saveData();
-      closeModal('modal-reviews');
-      document.getElementById('form-review').reset();
-      renderDoctors();
-      await syncToGoogleSheets();
-    }
-
-    function getAverageRating(reviews) {
-      if (!reviews || reviews.length === 0) return 0;
-      const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
-      return (sum / reviews.length).toFixed(1);
-    }
-
-    function openHistoryModal(docId) {
-      const doc = doctors.find(d => d.id === docId);
-      if (!doc) return;
-      document.getElementById('history-doc-id').value = docId;
-      document.getElementById('history-doctor-name').innerText = doc.name;
-      
-      const container = document.getElementById('history-container');
-      container.innerHTML = doc.history && doc.history.length ? '' : '<p>Sin consultas registradas.</p>';
-
-      (doc.history || []).forEach(h => {
-        container.innerHTML += `
-          <div class="history-item">
-            <strong>📅 ${h.date} - Paciente: ${h.patient}</strong>
-            <div>${h.notes}</div>
-          </div>
-        `;
-      });
-      openModal('modal-history');
-    }
-
-    async function saveHistoryEntry(e) {
-      e.preventDefault();
-      const docId = document.getElementById('history-doc-id').value;
-      const date = document.getElementById('history-date').value;
-      const patient = document.getElementById('history-patient').value;
-      const notes = document.getElementById('history-notes').value;
-
-      doctors = doctors.map(d => {
-        if (d.id === docId) {
-          if (!d.history) d.history = [];
-          d.history.push({ date, patient, notes });
-        }
-        return d;
-      });
-
-      saveData();
-      closeModal('modal-history');
-      document.getElementById('form-history').reset();
-      await syncToGoogleSheets();
-    }
-
-    function openShareModal() {
-      const qrContainer = document.getElementById('qrcode-container');
-      qrContainer.innerHTML = "";
-      new QRCode(qrContainer, {
-        text: window.location.href,
-        width: 180,
-        height: 180
-      });
-      openModal('modal-share');
-    }
-
-    function copyAppURL() {
-      navigator.clipboard.writeText(window.location.href);
-      alert("¡Enlace copiado al portapapeles!");
-    }
-
-    function openModal(id) { document.getElementById(id).classList.add('active'); }
-    function closeModal(id) { 
-      document.getElementById(id).classList.remove('active');
-      if(id === 'modal-doctor') {
-        document.getElementById('doc-id').value = '';
-        document.getElementById('modal-doc-title').innerText = "Nuevo Registro Médico";
-        document.getElementById('form-doctor').reset();
-      }
-    }
-
-    function saveData() {
-      localStorage.setItem('app_med_doctors', JSON.stringify(doctors));
-    }
-
-    function exportData() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(doctors, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `guia_medica_${new Date().toISOString().slice(0,10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    }
-
-    function exportMetricsJSON() {
-      const metrics = doctors.map(d => ({ name: d.name, specialty: d.specialty, clinic: d.clinic, consultas: d.queryCount || 0 }));
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(metrics, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `metricas_consultas_${new Date().toISOString().slice(0,10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    }
-
-    init();
-  </script>
-</body>
-</html>
+      <div id="reviews-doctor-name" style="font-weight:bold; margin-bottom:10
