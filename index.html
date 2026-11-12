@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TU GUIA MEDICA DIGITAL</title>
+  <title>TU MEDICO DIGITAL</title>
   
   <!-- Configuración PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0077b6">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="TU GUIA MEDICA DIGITAL">
+  <meta name="apple-mobile-web-app-title" content="TU MEDICO DIGITAL">
   
-  <!-- Enlaces de iconos dinámicos -->
-  <link id="dynamic-favicon" rel="icon" type="image/png" href="">
-  <link id="dynamic-apple-icon" rel="apple-touch-icon" href="">
+  <!-- Enlaces de iconos con tu URL de Postimages -->
+  <link id="dynamic-favicon" rel="icon" type="image/png" href="https://i.postimg.cc/fbSYL04G/icono-tu-guia-medica-digital.png">
+  <link id="dynamic-apple-icon" rel="apple-touch-icon" href="https://i.postimg.cc/fbSYL04G/icono-tu-guia-medica-digital.png">
 
   <!-- QRCode.js Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -211,9 +211,9 @@
   <!-- BANNER SUPERIOR DE INSTALACIÓN (ACCESO DIRECTO) -->
   <div id="install-banner">
     <div class="install-banner-content">
-      <img class="app-icon-img" alt="Icono TU GUIA MEDICA DIGITAL">
+      <img src="https://i.postimg.cc/fbSYL04G/icono-tu-guia-medica-digital.png" class="app-icon-img" alt="Icono TU MEDICO DIGITAL">
       <div class="install-banner-text">
-        <h4>📲 Instalar TU GUIA MEDICA DIGITAL</h4>
+        <h4>📲 Instalar TU MEDICO DIGITAL</h4>
         <p>Lleva el directorio siempre en la pantalla de inicio de tu dispositivo.</p>
       </div>
     </div>
@@ -224,7 +224,7 @@
   </div>
 
   <header>
-    <img class="header-logo app-icon-img" alt="Logo TU MEDICO DIGITAL">
+    <img src="https://i.postimg.cc/fbSYL04G/icono-tu-guia-medica-digital.png" class="header-logo app-icon-img" alt="Logo TU MEDICO DIGITAL">
     <h2>TU MEDICO DIGITAL</h2>
     <p style="font-size: 12px; opacity: 0.9;">Directorio de Especialistas y Centros de Salud</p>
     <div class="sync-status" id="sync-status">🟢 Conectado con Google Sheets</div>
@@ -420,22 +420,6 @@
   </div>
 
   <script>
-    // ==========================================
-    // PEGA AQUÍ TU ENLACE DIRECTO DE POSTIMAGES
-    // ==========================================
-    const APP_ICON_URL = "https://i.postimg.cc/fbSYL04G/icono-tu-guia-medica-digital.png";
-
-    // Inyectar automáticamente la URL en todos los elementos del icono
-    document.addEventListener("DOMContentLoaded", () => {
-      if (APP_ICON_URL && APP_ICON_URL !== "PEGAR_ENLACE_DIRECTO_AQUI") {
-        document.querySelectorAll('.app-icon-img').forEach(img => img.src = APP_ICON_URL);
-        const favicon = document.getElementById('dynamic-favicon');
-        const appleIcon = document.getElementById('dynamic-apple-icon');
-        if (favicon) favicon.href = APP_ICON_URL;
-        if (appleIcon) appleIcon.href = APP_ICON_URL;
-      }
-    });
-
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcsHHw64ZiFn9yEd6ltILWj__-pRwkO5kTFqK1flepas3MydpsNRVn3rzhKFKUZHhE4A/exec";
 
     if ('serviceWorker' in navigator) {
