@@ -75,6 +75,17 @@
       display: flex; flex-direction: column; align-items: center;
     }
 
+    .header-stats-bar {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      font-size: 11px;
+      opacity: 0.95;
+      margin-bottom: 8px;
+      padding: 0 4px;
+      font-weight: 600;
+    }
+
     .header-logo {
       width: 60px; height: 60px; object-fit: cover; margin-bottom: 8px;
       border-radius: 14px; box-shadow: 0 3px 8px rgba(0,0,0,0.3);
@@ -224,8 +235,14 @@
   </div>
 
   <header>
+    <!-- Barra superior integrada: Esquina izquierda (Descargas) y Esquina derecha (Visitas) -->
+    <div class="header-stats-bar">
+      <span>📥 Descargas: <strong id="downloads-count">0</strong></span>
+      <span>👁️ Visitas: <strong id="visits-count">0</strong></span>
+    </div>
+
     <img src="https://i.postimg.cc/fbSYL04G/icono-tu-guia-medica-digital.png" class="header-logo app-icon-img" alt="Logo TU MEDICO DIGITAL">
-    <h2>TU MEDICO DIGITAL</h2>
+    <h2>TU GUIA MEDICA DIGITAL</h2>
     <p style="font-size: 12px; opacity: 0.9;">Directorio de Especialistas y Centros de Salud</p>
     <div class="sync-status" id="sync-status">🟢 Conectado con Google Sheets</div>
   </header>
@@ -422,6 +439,19 @@
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcsHHw64ZiFn9yEd6ltILWj__-pRwkO5kTFqK1flepas3MydpsNRVn3rzhKFKUZHhE4A/exec";
 
+    // --- CONTADORES DE VISITAS Y DESCARGAS ---
+    let visits = parseInt(localStorage.getItem('app_med_visits') || '0') + 1;
+    localStorage.setItem('app_med_visits', visits);
+
+    let downloads = parseInt(localStorage.getItem('app_med_downloads') || '0');
+
+    function updateCountersUI() {
+      const visitsEl = document.getElementById('visits-count');
+      const downloadsEl = document.getElementById('downloads-count');
+      if (visitsEl) visitsEl.innerText = visits;
+      if (downloadsEl) downloadsEl.innerText = downloads;
+    }
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error:', err));
@@ -439,6 +469,13 @@
       }
     });
 
+    window.addEventListener('appinstalled', () => {
+      downloads++;
+      localStorage.setItem('app_med_downloads', downloads);
+      updateCountersUI();
+      closeInstallBanner();
+    });
+
     if (!window.matchMedia('(display-mode: standalone)').matches && !window.navigator.standalone) {
       if (installBanner) {
         installBanner.style.display = 'flex';
@@ -452,6 +489,10 @@
     }
 
     async function triggerInstallApp() {
+      downloads++;
+      localStorage.setItem('app_med_downloads', downloads);
+      updateCountersUI();
+
       if (deferredPrompt) {
         try {
           deferredPrompt.prompt();
@@ -503,6 +544,7 @@
     let activeCarouselIndexes = {};
 
     function init() {
+      updateCountersUI();
       populateSpecialties();
       fetchFromGoogleSheets();
     }
@@ -767,7 +809,7 @@
             <button type="button" class="btn btn-secondary btn-sm" style="width:100%" onclick="openReviewsModal('${doc.id}')">⭐ Ver / Dejar Opiniones</button>
           </div>
         `;
-        container.appendChild(card);
+    container.appendChild(card);
       });
     }
 
@@ -991,4 +1033,3 @@
     init();
   </script>
 </body>
-</html>
