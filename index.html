@@ -242,7 +242,7 @@
     </div>
 
     <img src="https://i.postimg.cc/fbSYL04G/icono-tu-guia-medica-digital.png" class="header-logo app-icon-img" alt="Logo TU MEDICO DIGITAL">
-    <h2>TU GUIA MEDICA DIGITAL</h2>
+    <h2>TU MEDICO DIGITAL</h2>
     <p style="font-size: 12px; opacity: 0.9;">Directorio de Especialistas y Centros de Salud</p>
     <div class="sync-status" id="sync-status">🟢 Conectado con Google Sheets</div>
   </header>
@@ -439,17 +439,34 @@
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcsHHw64ZiFn9yEd6ltILWj__-pRwkO5kTFqK1flepas3MydpsNRVn3rzhKFKUZHhE4A/exec";
 
-    // --- CONTADORES DE VISITAS Y DESCARGAS ---
-    let visits = parseInt(localStorage.getItem('app_med_visits') || '0') + 1;
-    localStorage.setItem('app_med_visits', visits);
+    // --- CONTADORES GLOBALES EN GOOGLE SHEETS ---
+    async function registerGlobalVisit() {
+      const alreadyVisited = sessionStorage.getItem('app_med_session_visited');
+      const action = alreadyVisited ? 'getStats' : 'addVisit';
+      
+      try {
+        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=${action}`);
+        const data = await res.json();
+        if (data && typeof data.visitas !== 'undefined') {
+          document.getElementById('visits-count').innerText = data.visitas;
+          document.getElementById('downloads-count').innerText = data.descargas;
+          sessionStorage.setItem('app_med_session_visited', 'true');
+        }
+      } catch (err) {
+        console.warn("No se pudieron cargar las estadísticas globales:", err);
+      }
+    }
 
-    let downloads = parseInt(localStorage.getItem('app_med_downloads') || '0');
-
-    function updateCountersUI() {
-      const visitsEl = document.getElementById('visits-count');
-      const downloadsEl = document.getElementById('downloads-count');
-      if (visitsEl) visitsEl.innerText = visits;
-      if (downloadsEl) downloadsEl.innerText = downloads;
+    async function registerGlobalDownload() {
+      try {
+        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=addDownload`);
+        const data = await res.json();
+        if (data && typeof data.descargas !== 'undefined') {
+          document.getElementById('downloads-count').innerText = data.descargas;
+        }
+      } catch (err) {
+        console.warn("No se pudo registrar la descarga global:", err);
+      }
     }
 
     if ('serviceWorker' in navigator) {
@@ -470,9 +487,7 @@
     });
 
     window.addEventListener('appinstalled', () => {
-      downloads++;
-      localStorage.setItem('app_med_downloads', downloads);
-      updateCountersUI();
+      registerGlobalDownload();
       closeInstallBanner();
     });
 
@@ -489,9 +504,7 @@
     }
 
     async function triggerInstallApp() {
-      downloads++;
-      localStorage.setItem('app_med_downloads', downloads);
-      updateCountersUI();
+      registerGlobalDownload();
 
       if (deferredPrompt) {
         try {
@@ -544,7 +557,7 @@
     let activeCarouselIndexes = {};
 
     function init() {
-      updateCountersUI();
+      registerGlobalVisit();
       populateSpecialties();
       fetchFromGoogleSheets();
     }
@@ -809,7 +822,7 @@
             <button type="button" class="btn btn-secondary btn-sm" style="width:100%" onclick="openReviewsModal('${doc.id}')">⭐ Ver / Dejar Opiniones</button>
           </div>
         `;
-    container.appendChild(card);
+        container.appendChild(card);
       });
     }
 
@@ -1033,3 +1046,4 @@
     init();
   </script>
 </body>
+</html>
